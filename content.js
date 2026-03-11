@@ -83,8 +83,8 @@
 
     // コピーボタン
     el.querySelector("#aun-copy-btn").addEventListener("click", () => {
-      const pct = el.querySelector("#aun-overlay-total").dataset.pct;
-      navigator.clipboard.writeText(pct + "%").then(() => {
+      const pctText = el.querySelector("#aun-overlay-total").dataset.pctText;
+      navigator.clipboard.writeText(pctText).then(() => {
         const btn = el.querySelector("#aun-copy-btn");
         btn.textContent = "\u2705";
         setTimeout(() => { btn.innerHTML = "&#x1F4CB;"; }, 1000);
@@ -111,11 +111,15 @@
     el.querySelector(".bar-done").style.width = donePct + "%";
     el.querySelector(".bar-wip").style.width = wipPct + "%";
 
-    const pctText = Math.round(donePct);
+    const donePctText = Math.round(donePct);
+    const wipPctText = Math.round(wipPct);
+    const handledCount = data.wip + data.done;
+    const handledPctText = Math.round(((handledCount) / total) * 100);
     const totalEl = el.querySelector("#aun-overlay-total");
     totalEl.textContent =
-      `全 ${data.total} 件中 ${data.done + data.wip} 件対応済み（${pctText}% 完了）`;
-    totalEl.dataset.pct = pctText;
+      `全 ${data.total} 件 | 合計 ${handledCount} 件 (${handledPctText}%) | 作業済み ${data.wip} 件 (${wipPctText}%) | 確認済み ${data.done} 件 (${donePctText}%)`;
+    totalEl.dataset.pctText =
+      `合計 ${handledPctText}% / 作業済み ${wipPctText}% / 確認済み ${donePctText}%`;
   }
 
   function makeDraggable(el, handle) {
