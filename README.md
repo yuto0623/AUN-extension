@@ -27,13 +27,13 @@ npm install
 ## ビルド
 
 ```bash
-# .xpi ファイルを生成（web-ext-artifacts/ に出力）
-npx web-ext build
+# web-ext build を実行し、生成物を .xpi として出力
+npm run build
 ```
 
 ## インストール
 
-1. `npx web-ext build` でビルド
+1. `npm run build` でビルド
 2. Firefox で `about:addons` を開く
 3. 歯車アイコン → 「ファイルからアドオンをインストール」から生成された `.xpi` ファイルを選択
 

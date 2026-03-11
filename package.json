@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "build": "npx web-ext build && node scripts/rename-web-ext-artifact.js"
+  },
   "dependencies": {
     "web-ext": "^9.4.0"
   }
