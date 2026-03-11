@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+  "name": "AUN Task Counter",
+  "version": "1.0.0",
+  "description": "AUNのタスク状況（未対応・対応中・確認済み）をオーバーレイ表示します",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "aun-task-counter@phonogram.co.jp",
+      "strict_min_version": "109.0"
+    }
+  },
+  "icons": {
+    "48": "icons/icon-48.svg"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://aun-mypage.tools/*"],
+      "js": ["content.js"],
+      "css": ["overlay.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": []
+}

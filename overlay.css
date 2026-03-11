@@ -1,0 +1,143 @@
+#aun-task-overlay {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999999;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  background: #1a1a2e;
+  color: #eee;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  min-width: 220px;
+  user-select: text;
+  overflow: hidden;
+  transition: opacity 0.2s;
+}
+
+#aun-task-overlay.collapsed #aun-overlay-body {
+  display: none;
+}
+
+#aun-overlay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #16213e;
+  cursor: move;
+  user-select: none;
+  border-radius: 12px 12px 0 0;
+}
+
+#aun-task-overlay.collapsed #aun-overlay-header {
+  border-radius: 12px;
+}
+
+#aun-overlay-header .title {
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+#aun-overlay-header .toggle-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+#aun-overlay-header .toggle-btn:hover {
+  color: #fff;
+}
+
+#aun-overlay-body {
+  padding: 12px 14px;
+}
+
+.aun-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
+.aun-stat-row + .aun-stat-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.aun-stat-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aun-stat-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.aun-stat-dot.open { background: #f44336; }
+.aun-stat-dot.wip { background: #2196f3; }
+.aun-stat-dot.done { background: #4caf50; }
+
+.aun-stat-count {
+  font-weight: 700;
+  font-size: 15px;
+  min-width: 28px;
+  text-align: right;
+}
+
+#aun-overlay-progress {
+  margin-top: 10px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+}
+
+#aun-overlay-progress .bar-done {
+  background: #4caf50;
+  transition: width 0.3s;
+}
+
+#aun-overlay-progress .bar-wip {
+  background: #2196f3;
+  transition: width 0.3s;
+}
+
+#aun-overlay-total-row {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+#aun-overlay-total {
+  font-size: 11px;
+  color: #888;
+}
+
+#aun-copy-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 5px;
+  line-height: 1;
+  color: #aaa;
+  transition: background 0.15s;
+}
+
+#aun-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
