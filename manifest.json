@@ -1,16 +1,22 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "AUN Task Counter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AUNのタスク状況（未対応・対応中・確認済み）をオーバーレイ表示します",
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "aun-task-counter@phonogram.co.jp",
-      "strict_min_version": "109.0"
-    }
-  },
   "icons": {
-    "48": "icons/icon-48.svg"
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "64": "icons/icon-64.png",
+    "96": "icons/icon-96.png"
+  },
+  "action": {
+    "default_title": "AUN Task Counter",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png"
+    }
   },
   "content_scripts": [
     {
@@ -19,6 +25,5 @@
       "css": ["overlay.css"],
       "run_at": "document_idle"
     }
-  ],
-  "permissions": []
+  ]
 }
