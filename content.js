@@ -76,9 +76,9 @@
     const toggleBtn = el.querySelector(".toggle-btn");
     toggleBtn.addEventListener("click", () => {
       el.classList.toggle("collapsed");
-      toggleBtn.innerHTML = el.classList.contains("collapsed")
-        ? "&#x25B2;"
-        : "&#x25BC;";
+      toggleBtn.textContent = el.classList.contains("collapsed")
+        ? "\u25B2"
+        : "\u25BC";
     });
 
     // コピーボタン
@@ -87,7 +87,7 @@
       navigator.clipboard.writeText(pctText).then(() => {
         const btn = el.querySelector("#aun-copy-btn");
         btn.textContent = "\u2705";
-        setTimeout(() => { btn.innerHTML = "&#x1F4CB;"; }, 1000);
+        setTimeout(() => { btn.textContent = "\uD83D\uDCCB"; }, 1000);
       });
     });
 

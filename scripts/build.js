@@ -19,6 +19,18 @@ const browsers = {
         gecko: {
           id: "aun-task-counter@phonogram.co.jp",
           strict_min_version: "109.0",
+          data_collection_permissions: {
+            required: ["websiteContent"],
+            personally_identifiable: false,
+            health: false,
+            financial: false,
+            authentication: false,
+            location: false,
+            browsing_activity: false,
+            search_history: false,
+            technical_and_interaction: false,
+            website_content: true,
+          },
         },
       },
     },
