@@ -1,7 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-const { spawnSync } = require("child_process");
-
 const rootDir = path.join(__dirname, "..");
 const distDir = path.join(rootDir, "dist");
 const artifactsDir = path.join(rootDir, "web-ext-artifacts");
@@ -52,36 +50,98 @@ function copyRecursive(sourcePath, destinationPath) {
   fs.copyFileSync(sourcePath, destinationPath);
 }
 
+function collectFiles(dir, base) {
+  const entries = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const rel = base ? `${base}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) {
+      entries.push(...collectFiles(path.join(dir, entry.name), rel));
+    } else {
+      entries.push({ rel, abs: path.join(dir, entry.name) });
+    }
+  }
+  return entries;
+}
+
 function createArchive(sourceDir, archivePath) {
   fs.rmSync(archivePath, { force: true });
-  const archiveDir = path.dirname(archivePath);
-  const archiveBaseName = path.basename(archivePath, path.extname(archivePath));
-  const zipPath = path.join(archiveDir, `${archiveBaseName}.zip`);
-  fs.rmSync(zipPath, { force: true });
 
-  const escapedSourceDir = sourceDir.replace(/'/g, "''");
-  const escapedZipPath = zipPath.replace(/'/g, "''");
-  const result = spawnSync(
-    "powershell",
-    [
-      "-NoProfile",
-      "-NonInteractive",
-      "-Command",
-      [
-        "Add-Type -AssemblyName System.IO.Compression.FileSystem",
-        `[System.IO.Compression.ZipFile]::CreateFromDirectory('${escapedSourceDir}', '${escapedZipPath}')`,
-      ].join("; "),
-    ],
-    { stdio: "inherit" }
-  );
+  const files = collectFiles(sourceDir, "");
+  const parts = [];
 
-  if (result.status !== 0) {
-    process.exit(result.status ?? 1);
+  for (const { rel, abs } of files) {
+    const data = fs.readFileSync(abs);
+    const nameBuffer = Buffer.from(rel, "utf8");
+
+    // Local file header
+    const header = Buffer.alloc(30);
+    header.writeUInt32LE(0x04034b50, 0);  // signature
+    header.writeUInt16LE(20, 4);          // version needed
+    header.writeUInt16LE(0, 6);           // flags
+    header.writeUInt16LE(0, 8);           // compression (store)
+    header.writeUInt16LE(0, 10);          // mod time
+    header.writeUInt16LE(0, 12);          // mod date
+    header.writeUInt32LE(crc32(data), 14);
+    header.writeUInt32LE(data.length, 18);
+    header.writeUInt32LE(data.length, 22);
+    header.writeUInt16LE(nameBuffer.length, 26);
+    header.writeUInt16LE(0, 28);          // extra field length
+
+    parts.push({ header, nameBuffer, data, rel });
   }
 
-  if (zipPath !== archivePath) {
-    fs.renameSync(zipPath, archivePath);
+  const output = [];
+  const centralDir = [];
+  let offset = 0;
+
+  for (const { header, nameBuffer, data } of parts) {
+    // Central directory entry
+    const cdEntry = Buffer.alloc(46);
+    cdEntry.writeUInt32LE(0x02014b50, 0);   // signature
+    cdEntry.writeUInt16LE(20, 4);           // version made by
+    cdEntry.writeUInt16LE(20, 6);           // version needed
+    cdEntry.writeUInt16LE(0, 8);            // flags
+    cdEntry.writeUInt16LE(0, 10);           // compression
+    cdEntry.writeUInt16LE(0, 12);           // mod time
+    cdEntry.writeUInt16LE(0, 14);           // mod date
+    header.copy(cdEntry, 16, 14, 30);       // crc, sizes, name/extra lengths
+    cdEntry.writeUInt16LE(0, 32);           // comment length
+    cdEntry.writeUInt16LE(0, 34);           // disk number
+    cdEntry.writeUInt16LE(0, 36);           // internal attrs
+    cdEntry.writeUInt32LE(0, 38);           // external attrs
+    cdEntry.writeUInt32LE(offset, 42);      // local header offset
+    centralDir.push(cdEntry, nameBuffer);
+
+    output.push(header, nameBuffer, data);
+    offset += header.length + nameBuffer.length + data.length;
   }
+
+  const cdOffset = offset;
+  const cdBuffers = Buffer.concat(centralDir);
+
+  // End of central directory
+  const eocd = Buffer.alloc(22);
+  eocd.writeUInt32LE(0x06054b50, 0);
+  eocd.writeUInt16LE(0, 4);                // disk number
+  eocd.writeUInt16LE(0, 6);                // cd disk number
+  eocd.writeUInt16LE(parts.length, 8);     // entries on this disk
+  eocd.writeUInt16LE(parts.length, 10);    // total entries
+  eocd.writeUInt32LE(cdBuffers.length, 12);
+  eocd.writeUInt32LE(cdOffset, 16);
+  eocd.writeUInt16LE(0, 20);               // comment length
+
+  fs.writeFileSync(archivePath, Buffer.concat([...output, cdBuffers, eocd]));
+}
+
+function crc32(buf) {
+  let crc = 0xffffffff;
+  for (let i = 0; i < buf.length; i++) {
+    crc ^= buf[i];
+    for (let j = 0; j < 8; j++) {
+      crc = (crc >>> 1) ^ (crc & 1 ? 0xedb88320 : 0);
+    }
+  }
+  return (crc ^ 0xffffffff) >>> 0;
 }
 
 function buildBrowser(browserName, config) {
