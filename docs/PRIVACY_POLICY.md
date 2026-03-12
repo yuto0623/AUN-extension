@@ -2,7 +2,7 @@
 
 Last updated: 2026-03-12
 
-AUN Task Counter ("the Extension") is a browser extension that displays task progress on AUN MyPage (aun-mypage.tools).
+AUN Task Counter ("the Extension") is a browser extension that displays task progress on AUN (aun-mypage.tools).
 
 ## Data Collection
 
@@ -26,4 +26,4 @@ Any updates to this policy will be reflected on this page with an updated date.
 
 ## Contact
 
-If you have questions about this policy, please contact: aun-task-counter@phonogram.co.jp
+If you have questions about this policy, please contact: yuto.ryr0623@gmail.com
