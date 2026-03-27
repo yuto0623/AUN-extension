@@ -17,7 +17,7 @@ const browsers = {
       ...sourceManifest,
       browser_specific_settings: {
         gecko: {
-          id: "aun-task-counter@phonogram.co.jp",
+          id: "{15ed1514-aa04-4baa-9a62-bc7365ac9f58}",
           strict_min_version: "109.0",
           data_collection_permissions: {
             required: ["websiteContent"],
